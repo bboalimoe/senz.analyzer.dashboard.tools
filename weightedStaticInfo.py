@@ -19,11 +19,13 @@ log.addHandler(LogentriesHandler('d700103a-44fb-4c35-9cb2-cbe206375060'))
 APP_NAME_DEST='test@senz.analyzer.dashboard'
 APP_ID_DEST='mqip2evxqhxu8c5essmfavnk44fdm85z12gtkkzzvzwfmzqn'
 APP_KEY_DEST='awfcehevaljgo4hqn6c8gp6nhagaqtgzlae1gp5x61l91xtv'
+leancloud.init(APP_ID_DEST,APP_KEY_DEST)
 
-
+not_binary_label_list = [['field__manufacture', 'field__financial', 'field__infotech', 'field__law', 'field__agriculture', 'field__human_resource', 'field__commerce', 'field__natural', 'field__service', 'field__humanities', 'field__medical', 'field__architecture', 'field__athlete'], ['age__16to35', 'age__35to55', 'age__55up', 'age__16down'], ['sport__basketball', 'sport__bicycling', 'sport__tabel_tennis', 'sport__football', 'sport__jogging', 'sport__badminton', 'sport__fitness'], ['consumption__10000to20000', 'consumption__20000up', 'consumption__5000to10000', 'consumption__5000down'], ['occupation__freelancer', 'occupation__supervisor', 'occupation__student', 'occupation__others', 'occupation__official', 'occupation__salesman', 'occupation__teacher', 'occupation__soldier', 'occupation__engineer']]
+binary_label_list = [u'ACG', u'indoorsman', u'game_show', u'has_car', u'game_news', u'entertainment_news', u'health', u'online_shopping', u'variety_show', u'business_news', u'tvseries_show', u'current_news', u'sports_news', u'tech_news', u'offline_shopping', u'pregnant', u'gender', u'study', u'married', u'sports_show', u'gamer', u'social', u'has_pet']
 all_label_list = ['field__manufacture', 'field__financial', 'field__infotech', 'field__law', 'field__agriculture', 'field__human_resource', 'field__commerce', 'field__natural', 'field__service', 'field__humanities', 'field__medical', 'field__architecture', 'field__athlete', 'age__16to35', 'age__35to55', 'age__55up', 'age__16down', 'sport__basketball', 'sport__bicycling', 'sport__tabel_tennis', 'sport__football', 'sport__jogging', 'sport__badminton', 'sport__fitness', 'consumption__10000to20000', 'consumption__20000up', 'consumption__5000to10000', 'consumption__5000down', 'occupation__freelancer', 'occupation__supervisor', 'occupation__student', 'occupation__others', 'occupation__official', 'occupation__salesman', 'occupation__teacher', 'occupation__soldier', 'occupation__engineer',u'ACG', u'indoorsman', u'game_show', u'has_car', u'game_news', u'entertainment_news', u'health', u'online_shopping', u'variety_show', u'business_news', u'tvseries_show', u'current_news', u'sports_news', u'tech_news', u'offline_shopping', u'pregnant', u'gender', u'study', u'married', u'sports_show', u'gamer', u'social', u'has_pet']
 query_limit=700
-leancloud.init(APP_ID_DEST,APP_KEY_DEST)
+
 # table_name='UserBehavior'
 field_name='objectId'
 currentTime = datetime.datetime.now()
@@ -108,12 +110,20 @@ for user in userDataDict.keys():
         # field_value_matrix[index1,index2+index3] = record.get('timestamp')
     #接着按照timestamp的顺序将每天记录按升序排序
     sorted_field_value_matrix=np.array(sorted(field_value_matrix,key=lambda record:record[-1]))     # change to a list after sorted
+    weightedValueDict = {}
     for index2,field in enumerate(all_label_list):
         log.info('sorted_field_value_matrix:  \n' + str(sorted_field_value_matrix))
         weightedValue = np.dot(sorted_field_value_matrix[:,index2].flatten(),normalizedWeight)
         log.info('normalizedWeight:  \n' + str(normalizedWeight))
         log.info('weightedValue:  \n' + str(weightedValue))
-        dbTable.set(field,weightedValue)
+        weightedValueDict[field] = weightedValue
+
+    for field_list in not_binary_label_list:
+        valueDict = {field:weightedValueDict[field] for field in field_list}
+        mostPossibleFieldTuple = sorted(valueDict.items(),key = lambda l:l[1],reverse=True)[0]
+        weightedValueDict[field_list[0].split('__')[0]]={mostPossibleFieldTuple[0].split('__')[1]:mostPossibleFieldTuple[1]}
+    for field ,value in weightedValueDict.items():
+        dbTable.set(field,value)
 
     # for index2,field in enumerate(not_binary_label_list):
 

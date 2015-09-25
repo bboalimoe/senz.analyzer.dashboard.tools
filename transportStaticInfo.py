@@ -44,7 +44,7 @@ for index in range(query_times):
         recordWrap ={}
         recordWrap['labels']=result.get(field_name)
         recordWrap['UserInfoLog'] = result
-        staticInfoDict[result.get('user')]=recordWrap
+        staticInfoDict[result.get('user')]=recordWrap  #注意此处的每个user是不同的
 
 leancloud.init(APP_ID_DEST,APP_KEY_DEST)
 for index ,key in enumerate(staticInfoDict.keys()):
