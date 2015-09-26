@@ -24,12 +24,27 @@ log.addHandler(LogentriesHandler('d700103a-44fb-4c35-9cb2-cbe206375060'))
 APP_NAME_DEST='senz.app.dashboard'
 APP_ID_DEST='2x27tso41inyau4rkgdqts0mrao1n6rq1wfd6644vdrz2qfo'
 APP_KEY_DEST='3fuabth1ar3sott9sgxy4sf8uq31c9x8bykugv3zh7eam5ll'
-leancloud.init(APP_ID_DEST,APP_KEY_DEST)
+MASTER_KEY = 'hpt6805u8a98u8nmp74da55dsfvvnqzrsqakdxgfvrse7mma'
+leancloud.init(APP_ID_DEST,master_key=MASTER_KEY)
 
 # analyze developer's custom event
 
 query_limit = 1000
 current_time = datetime.datetime.now()
+
+APP_STATIC_INFO_TABLE = 'AppStaticInfo'
+TRACKER_TABLE = 'BindingInstallation'
+APPLICATION_TABLE = 'Application'
+INSTALLATION_TABLE = 'BindingInstallation'
+APPLICATION_FIELD = 'application'
+USER_FIELD = 'user'
+TRACKER_FIELD = 'tracker'
+FLATTEN_STATIC_INFO_TABLE = 'FlattenStaticInfo'
+FLATTEN_USER_BEHAVIOR = 'TrackerContext'
+WEIGHTED_STATIC_INFO = 'WeightedTrackerInfo'
+WEIGHTED_USER_BEHAVIOR = ''
+
+
 
 notBinaryData={'age':{"16down":0,"16to35":0.9,"35to55":0.1,"55up":0},'sport':{"jogging":0,"fitness":0,"basketball":0.8,"football":0,"badminton":0,"bicycling":0,"tabel_tennis":0},'field':{"service":0,"commerce":0,"law":0,"humanities":0,"architecture":0,"medical":0,"manufacture":0,"human_resource":0,"financial":0,"natural":0.6,"agriculture":0,"infotech":0,"athlete":0},'consumption':{"5000down":0.1,"5000to10000":0.5,"10000to20000":0.6,"20000up":0.4},'occupation':{"official":0,"teacher":0,"freelancer":0,"supervisor":0,"salesman":0,"engineer":0.8,"others":0,"soldier":0,"student":0}}
 binaryData=[u'ACG',u'indoorsman',u'game_show',u'has_car',u'game_news',u'entertainment_news',u'health',u'online_shopping',u'variety_show',u'business_news',u'tvseries_show',u'current_news',u'sports_news',u'tech_news',u'offline_shopping',u'pregnant',u'gender',u'study',u'married',u'sports_show',u'gamer',u'social',u'has_pet']
@@ -59,7 +74,7 @@ all_feature_list=['field-manufacture',
  'age-16down',
  'sport-basketball',
  'sport-bicycling',
- 'sport-tabel_tennis',
+ 'sport-table_tennis',
  'sport-football',
  'sport-jogging',
  'sport-badminton',
@@ -109,6 +124,8 @@ currentTime = datetime.datetime.now()
 #      =>[get_all_tracker(得到所有存在的tracker)]
 # 输入：<所有的Application>(包括demo)，<所有的field>(其中包含所有tracker的信息)
 # 输出：每个开发者应用的自定义event
+
+# 暂时废弃（9.25）
 def fake_static_info(table_name='StaticInfo'):
     table_name='StaticInfo'
     DBTable = Object.extend(table_name)
@@ -139,11 +156,8 @@ def get_all_static_info(table_name='UserInfoLog',field_name='staticInfo'):
     query.less_than('updatedAt',current_time)
     total_count=query.count()
     print 'TotalCount %s' %str(total_count)
-
     query_times=(total_count+query_limit-1)/query_limit
-
     static_info_list=[]
-
     for index in range(query_times):
         print 'querying index: %s' %str(index)
         query = Query(DBTable)
@@ -162,14 +176,14 @@ def get_all_static_info(table_name='UserInfoLog',field_name='staticInfo'):
 def flat_static_info_object(table_name='UserInfoLog',field_name='staticInfo'):
     static_info_list = get_all_static_info(table_name=table_name,field_name=field_name)
     print 'Length of static_info_list is %s' %(str(len(static_info_list)))
-    StaticInfo = Object.extend('RealStaticInfo')
+    StaticInfo = Object.extend(FLATTEN_STATIC_INFO_TABLE)
     for index ,static_info_record in enumerate(static_info_list):
         all_feature_list_tmp = all_feature_list[:]
         print 'saving index: %s' %str(index)
         # print staticInfoDict[key]
 
         staticInfo = StaticInfo()
-        staticInfo.set('tracker',static_info_record)
+        staticInfo.set('tracker',static_info_record.get(USER_FIELD))
         staticInfo.set('userInfoLogSrc',static_info_record)
         #dict comprehension
         # print 'the static_info object is : %s with the objectId is %s' %(str(static_info_record.get('staticInfo')),str(static_info_record.id))
@@ -225,15 +239,15 @@ def get_all_behavior_prediction(table_name='UserBehavior',field_name='prediction
 #功能：取UserBehavior中的prediction列表中prediction的prob最大的prediction，然后取senzList的第一个senz，sound，location，motion字段，并取prediction中概率最大的event
 #过程：flat_tracker_behavior_prediction
 #     => get_all_behavior_prediction(取出UserBehavior中所有的record）
-def flat_tracker_behavior_prediction(table_name='UserBehavior',field_name='prediction',table_name_dest='RealTrackerContext'):
+def flat_tracker_behavior_prediction(table_name='UserBehavior',field_name='prediction',table_name_dest=FLATTEN_USER_BEHAVIOR):
     behavior_prediction_dict = get_all_behavior_prediction(table_name='UserBehavior',field_name='prediction')
     table_name_dest = table_name_dest
     DBTable = Object.extend(table_name_dest)
-    for key,item in enumerate(behavior_prediction_dict.items()):
+    for key,item in behavior_prediction_dict.items():
         # print 'saving index: %s' %str(index)
         dbTable = DBTable()
         if item['prediction']:
-            description = 'this tabele comes from UserBehavior,and choose the most probably prediction in the prediction list then  get and store the first senz in senzList in the prediction and store the most probably event in the prediction'
+            description = 'this table comes from UserBehavior,and choose the most probably prediction in the prediction list then  get and store the first senz in senzList in the prediction and store the most probably event in the prediction'
             most_likely_prediction = sorted(item['prediction'],key = lambda behavior: behavior['behavior']['prob'],reverse=True)[0]
             dbTable.set('sound',most_likely_prediction['behavior']['senzList'][0]['sound'])
             dbTable.set('motion',most_likely_prediction['behavior']['senzList'][0]['motion'])
@@ -245,28 +259,55 @@ def flat_tracker_behavior_prediction(table_name='UserBehavior',field_name='predi
             dbTable.set('tracker',key.get('user'))
             dbTable.set('user_behavior',key)
             dbTable.set('description','')
-            dbTable.save()
+
+            #这个地方经常报错，数据量有点大耶
+            try:
+                dbTable.save()
+            except (LeanCloudError ,TypeError) as e:
+                print e
+                try:
+                    dbTable.save()
+                except (LeanCloudError ,TypeError) as e:
+                    print e
+
+
+
             # print 'saving successfully  index: %s' %str(index)
 
     print 'finished all'
 
 
-def get_all_tracker(table_name='Tracker'):
+def get_all_tracker(table_name=INSTALLATION_TABLE):
     DbTable = table_name
     query = Query(DbTable)
     query.less_than('createdAt',current_time)
     query.exists('objectId')
     total_count=query.count()
     query_times=(total_count+query_limit-1)/query_limit
-    user_list = []
+    all_installation_list = []
     for index in range(query_times):
         query = Query(DbTable)
         query.exists('objectId')
         query.less_than('createdAt',current_time)
+        query.select(USER_FIELD)
         query.ascending('createdAt')
         query.limit(query_limit)
         query.skip(index*query_limit)
-        user_list.extend(query.find())
+        all_installation_list.extend(query.find())
+
+    user_id_set = set()
+    user_list = []
+    for installation in all_installation_list:
+        user = installation.get(USER_FIELD)
+        user_id = user.id
+        if user_id not in user_id_set:
+            user_id_set.add(user_id)
+            user_list.append(user)
+
+
+        else:
+            pass
+    print "Have gotten all the trackers,total number is: %s" %(str(len(user_list)))
     return user_list
 
 def get_tracker_data(table_name=None,tracker_list=None,field_name=None):
@@ -275,6 +316,7 @@ def get_tracker_data(table_name=None,tracker_list=None,field_name=None):
     tracker_data_dict = {}
     for index,tracker in enumerate(tracker_list):
         #这样处理是因为可能一个user的记录超过了一次可以读取的数量（1K条）
+        print 'Getting tracker data index: %s'  %(str(index))
         query = Query(DBTable)
         query.equal_to(field_name,tracker)
         query.less_than('createdAt',currentTime)
@@ -295,15 +337,16 @@ def get_tracker_data(table_name=None,tracker_list=None,field_name=None):
                 tracker_data_dict.get(tracker).extend(query.find())
             else :
                 tracker_data_dict[tracker]=query.find()
+    print "Have gotton all the tracker data"
     return tracker_data_dict
 # 功能：所有展开过的staticInfo中，每个tracker可能有多个staticInfo，这里按照时间的先后顺序，将一个tracker的所有staticInfo加权合并成一个staticInfo，并且将不是binary的feature合并，比如age
 # 过程：weight_tracker_static_info
 #      => [get_all_tracker
 #           ]
-def weight_tracker_static_info(table_name='RealWeightedTrackerInfo'):
-    all_tracker_list = get_all_tracker(table_name='Tracker')
+def weight_tracker_static_info(table_name=WEIGHTED_STATIC_INFO):
+    all_tracker_list = get_all_tracker(table_name=INSTALLATION_TABLE)
      # tracker_data_dict的键是tracker，值是一个tracker的所有的staticInfo记录
-    tracker_data_dict = get_tracker_data(table_name='StaticInfo',tracker_list=all_tracker_list,field_name='user')
+    tracker_data_dict = get_tracker_data(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=all_tracker_list,field_name=TRACKER_FIELD)
     weightedUserDataDict ={}
     DBTable = Object.extend(table_name)
     for tracker,tracker_record_list in tracker_data_dict.items():
@@ -323,7 +366,9 @@ def weight_tracker_static_info(table_name='RealWeightedTrackerInfo'):
             relation.add(record)
             for index2,field in enumerate(all_label_list):
                 field_value_matrix[index1,index2] = record.get(field)
-            field_value_matrix[index1,index2+1] = record.get('timestamp')
+            # field_value_matrix[index1,index2+1] = record.get('timestamp')
+            field_value_matrix[index1,len(all_label_list)] = record.get('timestamp')
+
             # for index2,field in enumerate(not_binary_label_list):
             #     field_value_matrix[index1,index2] = record.get(field)
             # for index3,field in enumerate(binary_label_list):
@@ -344,6 +389,7 @@ def weight_tracker_static_info(table_name='RealWeightedTrackerInfo'):
             mostPossibleFieldTuple = sorted(valueDict.items(),key = lambda l:l[1],reverse=True)[0]
             weightedValueDict[field_list[0].split('__')[0]]={mostPossibleFieldTuple[0].split('__')[1]:mostPossibleFieldTuple[1]}
         for field ,value in weightedValueDict.items():
+            print 'Field: %s\nValue: %s' %(str(field),str(value))
             dbTable.set(field,value)
         dbTable.save()
 
@@ -354,9 +400,9 @@ def weight_tracker_static_info(table_name='RealWeightedTrackerInfo'):
 #          ,get_tracker_data（传入上一步得到的tracker_list，得到一个tracker和其所有tracker_data的字典的列表)
 #           ]
 def weight_tracker_user_context(table_name='RealWeightedTrackerInfo'):
-    all_tracker_list = get_all_tracker(table_name='Tracker')
+    all_tracker_list = get_all_tracker(table_name=INSTALLATION_TABLE)
      # tracker_data_dict的键是tracker，值是一个tracker的所有的staticInfo记录
-    tracker_data_dict = get_tracker_data(table_name='StaticInfo',tracker_list=all_tracker_list,field_name='user')
+    tracker_data_dict = get_tracker_data(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=all_tracker_list,field_name=TRACKER_FIELD)
     weightedUserDataDict ={}
     DBTable = Object.extend(table_name)
     for tracker,tracker_record_list in tracker_data_dict.items():
@@ -400,8 +446,10 @@ def weight_tracker_user_context(table_name='RealWeightedTrackerInfo'):
             dbTable.set(field,value)
         dbTable.save()
 
-
-def get_all_applications(db_name='Application'):
+def get_all_applications(db_name=APPLICATION_TABLE):
+    '''
+    功能：查询并返回所有的应用，这里包括demo应用，返回形式为list
+    '''
     DbTable = db_name
     query = Query(DbTable)
     query.less_than('createdAt',current_time)
@@ -419,40 +467,45 @@ def get_all_applications(db_name='Application'):
         result_list.extend(query.find())
     return result_list
 
-def get_all_demo_applications(db_name='DemoApplication'):
-    DbTable = db_name
-    query = Query(DbTable)
-    query.less_than('createdAt',current_time)
-    query.exists('objectId')
-    total_count=query.count()
-    query_times=(total_count+query_limit-1)/query_limit
-    result_list = []
-    for index in range(query_times):
-        query = Query(DbTable)
-        query.exists('objectId')
-        query.less_than('createdAt',current_time)
-        query.ascending('createdAt')
-        query.limit(query_limit)
-        query.skip(index*query_limit)
-        result_list.extend(query.find())
-    return result_list
-
-def get_all_trackers(db_name='Tracker'):
+def get_all_trackers(db_name=INSTALLATION_TABLE):
+    '''
+    这里返回每个应用和Installation表中相应user列表的字典
+    '''
+    # all_application_list = get_all_demo_applications()
+    # all_application_list.extend(get_all_applications())
+    # 现在 Demo应用和新建的应用在一个表里面
     print 'begin get_all_applications'
-    all_application_list = get_all_demo_applications()
-    all_application_list.extend(get_all_applications())
+    all_application_list = get_all_applications()
+
     print 'length of application_list is %s' %(str(len(all_application_list)))
     print 'end get_all_applications'
     application_tracker_dict = {}
     for app in all_application_list:
-        relation = app.relation('tracker')
-        query = relation.query()
-        result_list = query.find()
+        Installation = Object.extend(INSTALLATION_TABLE)
+        query = Query(Installation)
+        query.equal_to(APPLICATION_FIELD,app)
+        query.less_than('createdAt',current_time)
+        total_count=query.count()
+        query_times=(total_count+query_limit-1)/query_limit
+        installation_list = []
+        for index in range(query_times):
+            query = Query(Installation)
+            query.equal_to(APPLICATION_FIELD,app)
+            query.select(USER_FIELD)
+            query.less_than('createdAt',current_time)
+            query.ascending('createdAt')
+            query.limit(query_limit)
+            query.skip(index*query_limit)
+            installation_list.extend(query.find())
+        # relation = app.relation('tracker')
+        # query = relation.query()
+        # result_list = query.find()
         #如果这个application没有tracker，则直接忽略掉
-        if result_list:
-            application_tracker_dict[app] = result_list
-        print 'this application-tracker_list length is %s' %(str(len(result_list)))
+        if installation_list:
+            application_tracker_dict[app] = [installation.get(USER_FIELD) for installation in installation_list]
+        print 'this application-tracker_list length is %s' %(str(len(installation_list)))
     print 'the length of application_tracker_dict is %s' %(str(len(application_tracker_dict.keys())))
+
     return application_tracker_dict
 
 def get_age_and_gender_data_dict(table_name='RealWeightedStaticInfo',tracker_list=None):
@@ -499,20 +552,20 @@ def get_age_and_gender_data_dict(table_name='RealWeightedStaticInfo',tracker_lis
 #          ,get_all_applications](得到每个应用的所有tracker)
 #          ,[get_age_and_gender_data_dict(统计一个应用所有的tracker的age和gender信息，age和gender信息已经保存在了一个对象中)]
 #           ]
-def analyze_tracker_static_info(table_name='AppStaticInfo'):
+def analyze_tracker_static_info(table_name=APP_STATIC_INFO_TABLE):
     DBTable = Object.extend(table_name)
 
     print 'begin get_all_trackers'
-    application_tracker_dict = get_all_trackers(db_name='Tracker')
+    application_tracker_dict = get_all_trackers(db_name=INSTALLATION_TABLE)
     print 'end get_all_trackers'
     for app,tracker_list in application_tracker_dict.items():
         dbTable = DBTable()
         print 'begin get_age_and_gender_data_dict'
-        age_and_gender_dict = get_age_and_gender_data_dict(table_name='WeightedStaticInfo',tracker_list=tracker_list)
-        occupation_dict = get_occupation_data_dict(table_name='WeightedStaticInfo',tracker_list=tracker_list)
-        sport_dict = get_sport_data_dict(table_name='WeightedStaticInfo',tracker_list=tracker_list)
-        consumption_dict = get_consumption_data_dict(table_name='WeightedStaticInfo',tracker_list=tracker_list)
-        field_dict = get_field_data_dict(table_name='WeightedStaticInfo',tracker_list=tracker_list)
+        age_and_gender_dict = get_age_and_gender_data_dict(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=tracker_list)
+        occupation_dict = get_occupation_data_dict(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=tracker_list)
+        sport_dict = get_sport_data_dict(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=tracker_list)
+        consumption_dict = get_consumption_data_dict(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=tracker_list)
+        field_dict = get_field_data_dict(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=tracker_list)
 
 
         print 'end get_age_and_gender_data_dict'
@@ -749,7 +802,7 @@ if __name__ == '__main__':
 # 过程：weight_tracker_static_info
 #      =>[get_all_tracker
 #           ]
-#     weight_tracker_static_info()
+    weight_tracker_static_info()
 
 # 功能：所有展开过的staticInfo中，每个tracker可能有多个staticInfo，这里按照时间的先后顺序，将一个tracker的所有staticInfo加权合并成一个staticInfo，并且将不是binary的feature合并，比如age
 # 过程：weight_tracker_static_info
@@ -764,7 +817,7 @@ if __name__ == '__main__':
 #          =>[get_all_demo_applications
 #             ,get_all_applications](得到每个应用的所有tracker)
 #         [get_tracker_context](遍历应用，计算每个应用所有的tracker的location分布，其中每个用户的location字段是一个各个location feature和时间的字典)
-    analyze_tracker_static_info()
+#     analyze_tracker_static_info()
 
 # 功能：分析所有应用的 所有trackers 经常在的location的时间比例
 # 过程：analyze_tracker_context
@@ -779,4 +832,24 @@ if __name__ == '__main__':
 
 
 
+
+
+
+# def get_all_demo_applications(db_name='DemoApplication'):
+#     DbTable = db_name
+#     query = Query(DbTable)
+#     query.less_than('createdAt',current_time)
+#     query.exists('objectId')
+#     total_count=query.count()
+#     query_times=(total_count+query_limit-1)/query_limit
+#     result_list = []
+#     for index in range(query_times):
+#         query = Query(DbTable)
+#         query.exists('objectId')
+#         query.less_than('createdAt',current_time)
+#         query.ascending('createdAt')
+#         query.limit(query_limit)
+#         query.skip(index*query_limit)
+#         result_list.extend(query.find())
+#     return result_list
 
