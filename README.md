@@ -1,0 +1,10 @@
+这篇文档主要说明一下这个repo的作用
+
+最终有用的代码是在 analyze_applicaiton_static_info.py 和 analyze_developer_custom_event.py 中
+
+analyze_applicaiton_static_info.py 这个文件主要根据senz.datasource.timeline中的UserInfoLog表中的staticInfo这个域中的值来做的分析。
+整体思路就是把staticInfo中所有的字段拆开，将一个tracker所有的记录和所有的字段拼成一个大的矩阵，然后按时间排序，做计算。这个算法是存在不合理的地方的，
+肯定需要改善。目前，在最后一次绑定Installation这个版本时，貌似在计算矩阵的时候有一些问题。
+
+analyze_developer_custom_event.py 这个文件主要是根据senz.datasource.timeline中的UserEvent表以及一个实际上还没有的但在senz.app.dashboard中虚构
+了的FakeAppEvent表，来计算开发者自定义事件被触发时tracker此时的状态，包括此时正在做的事情，此时的位置等（目前还没有做）。

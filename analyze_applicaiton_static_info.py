@@ -32,7 +32,7 @@ leancloud.init(APP_ID_DEST,master_key=MASTER_KEY)
 query_limit = 1000
 current_time = datetime.datetime.now()
 
-APP_STATIC_INFO_TABLE = 'AppStaticInfo'
+APP_STATIC_INFO_TABLE = 'NewAppStaticInfo'
 TRACKER_TABLE = 'BindingInstallation'
 APPLICATION_TABLE = 'Application'
 INSTALLATION_TABLE = 'BindingInstallation'
@@ -46,75 +46,16 @@ WEIGHTED_USER_BEHAVIOR = ''
 
 
 
-notBinaryData={'age':{"16down":0,"16to35":0.9,"35to55":0.1,"55up":0},'sport':{"jogging":0,"fitness":0,"basketball":0.8,"football":0,"badminton":0,"bicycling":0,"tabel_tennis":0},'field':{"service":0,"commerce":0,"law":0,"humanities":0,"architecture":0,"medical":0,"manufacture":0,"human_resource":0,"financial":0,"natural":0.6,"agriculture":0,"infotech":0,"athlete":0},'consumption':{"5000down":0.1,"5000to10000":0.5,"10000to20000":0.6,"20000up":0.4},'occupation':{"official":0,"teacher":0,"freelancer":0,"supervisor":0,"salesman":0,"engineer":0.8,"others":0,"soldier":0,"student":0}}
+notBinaryData={'age':{"16down":0,"16to35":0.9,"35to55":0.1,"55up":0},'sport':{"jogging":0,"fitness":0,"basketball":0.8,"football":0,"badminton":0,"bicycling":0,"table_tennis":0},'field':{"service":0,"commerce":0,"law":0,"humanities":0,"architecture":0,"medical":0,"manufacture":0,"human_resource":0,"financial":0,"natural":0.6,"agriculture":0,"infotech":0,"athlete":0},'consumption':{"5000down":0.1,"5000to10000":0.5,"10000to20000":0.6,"20000up":0.4},'occupation':{"official":0,"teacher":0,"freelancer":0,"supervisor":0,"salesman":0,"engineer":0.8,"others":0,"soldier":0,"student":0}}
 binaryData=[u'ACG',u'indoorsman',u'game_show',u'has_car',u'game_news',u'entertainment_news',u'health',u'online_shopping',u'variety_show',u'business_news',u'tvseries_show',u'current_news',u'sports_news',u'tech_news',u'offline_shopping',u'pregnant',u'gender',u'study',u'married',u'sports_show',u'gamer',u'social',u'has_pet']
 
 
-not_binary_label_list = [['field__manufacture', 'field__financial', 'field__infotech', 'field__law', 'field__agriculture', 'field__human_resource', 'field__commerce', 'field__natural', 'field__service', 'field__humanities', 'field__medical', 'field__architecture', 'field__athlete'], ['age__16to35', 'age__35to55', 'age__55up', 'age__16down'], ['sport__basketball', 'sport__bicycling', 'sport__tabel_tennis', 'sport__football', 'sport__jogging', 'sport__badminton', 'sport__fitness'], ['consumption__10000to20000', 'consumption__20000up', 'consumption__5000to10000', 'consumption__5000down'], ['occupation__freelancer', 'occupation__supervisor', 'occupation__student', 'occupation__others', 'occupation__official', 'occupation__salesman', 'occupation__teacher', 'occupation__soldier', 'occupation__engineer']]
+not_binary_label_list = [['field__manufacture', 'field__financial', 'field__infotech', 'field__law', 'field__agriculture', 'field__human_resource', 'field__commerce', 'field__natural', 'field__service', 'field__humanities', 'field__medical', 'field__architecture', 'field__athlete'], ['age__16to35', 'age__35to55', 'age__55up', 'age__16down'], ['sport__basketball', 'sport__bicycling', 'sport__table_tennis', 'sport__football', 'sport__jogging', 'sport__badminton', 'sport__fitness'], ['consumption__10000to20000', 'consumption__20000up', 'consumption__5000to10000', 'consumption__5000down'], ['occupation__freelancer', 'occupation__supervisor', 'occupation__student', 'occupation__others', 'occupation__official', 'occupation__salesman', 'occupation__teacher', 'occupation__soldier', 'occupation__engineer']]
 binary_label_list = [u'ACG', u'indoorsman', u'game_show', u'has_car', u'game_news', u'entertainment_news', u'health', u'online_shopping', u'variety_show', u'business_news', u'tvseries_show', u'current_news', u'sports_news', u'tech_news', u'offline_shopping', u'pregnant', u'gender', u'study', u'married', u'sports_show', u'gamer', u'social', u'has_pet']
-all_label_list = ['field__manufacture', 'field__financial', 'field__infotech', 'field__law', 'field__agriculture', 'field__human_resource', 'field__commerce', 'field__natural', 'field__service', 'field__humanities', 'field__medical', 'field__architecture', 'field__athlete', 'age__16to35', 'age__35to55', 'age__55up', 'age__16down', 'sport__basketball', 'sport__bicycling', 'sport__tabel_tennis', 'sport__football', 'sport__jogging', 'sport__badminton', 'sport__fitness', 'consumption__10000to20000', 'consumption__20000up', 'consumption__5000to10000', 'consumption__5000down', 'occupation__freelancer', 'occupation__supervisor', 'occupation__student', 'occupation__others', 'occupation__official', 'occupation__salesman', 'occupation__teacher', 'occupation__soldier', 'occupation__engineer',u'ACG', u'indoorsman', u'game_show', u'has_car', u'game_news', u'entertainment_news', u'health', u'online_shopping', u'variety_show', u'business_news', u'tvseries_show', u'current_news', u'sports_news', u'tech_news', u'offline_shopping', u'pregnant', u'gender', u'study', u'married', u'sports_show', u'gamer', u'social', u'has_pet']
+all_label_list = ['field__manufacture', 'field__financial', 'field__infotech', 'field__law', 'field__agriculture', 'field__human_resource', 'field__commerce', 'field__natural', 'field__service', 'field__humanities', 'field__medical', 'field__architecture', 'field__athlete', 'age__16to35', 'age__35to55', 'age__55up', 'age__16down', 'sport__basketball', 'sport__bicycling', 'sport__table_tennis', 'sport__football', 'sport__jogging', 'sport__badminton', 'sport__fitness', 'consumption__10000to20000', 'consumption__20000up', 'consumption__5000to10000', 'consumption__5000down', 'occupation__freelancer', 'occupation__supervisor', 'occupation__student', 'occupation__others', 'occupation__official', 'occupation__salesman', 'occupation__teacher', 'occupation__soldier', 'occupation__engineer',u'ACG', u'indoorsman', u'game_show', u'has_car', u'game_news', u'entertainment_news', u'health', u'online_shopping', u'variety_show', u'business_news', u'tvseries_show', u'current_news', u'sports_news', u'tech_news', u'offline_shopping', u'pregnant', u'gender', u'study', u'married', u'sports_show', u'gamer', u'social', u'has_pet']
 
 # 这个所有feature的列表要经常根据config的改变而进行更改
-all_feature_list=['field-manufacture',
- 'field-financial',
- 'field-infotech',
- 'field-law',
- 'field-agriculture',
- 'field-human_resource',
- 'field-commerce',
- 'field-natural',
- 'field-service',
- 'field-humanities',
- 'field-medical',
- 'field-architecture',
- 'field-athlete',
- 'age-16to35',
- 'age-35to55',
- 'age-55up',
- 'age-16down',
- 'sport-basketball',
- 'sport-bicycling',
- 'sport-table_tennis',
- 'sport-football',
- 'sport-jogging',
- 'sport-badminton',
- 'sport-fitness',
- 'consumption-10000to20000',
- 'consumption-20000up',
- 'consumption-5000to10000',
- 'consumption-5000down',
- 'occupation-freelancer',
- 'occupation-supervisor',
- 'occupation-student',
- 'occupation-others',
- 'occupation-official',
- 'occupation-salesman',
- 'occupation-teacher',
- 'occupation-soldier',
- 'occupation-engineer',
- 'ACG',
- 'indoorsman',
- 'game_show',
- 'has_car',
- 'game_news',
- 'entertainment_news',
- 'health',
- 'online_shopping',
- 'variety_show',
- 'business_news',
- 'tvseries_show',
- 'current_news',
- 'sports_news',
- 'tech_news',
- 'offline_shopping',
- 'pregnant',
- 'gender',
- 'study',
- 'married',
- 'sports_show',
- 'gamer',
- 'social',
- 'has_pet']
+all_feature_list=['field-manufacture','field-financial','field-infotech','field-law','field-agriculture','field-human_resource','field-commerce','field-natural','field-service','field-humanities','field-medical','field-architecture','field-athlete','age-16to35','age-35to55','age-55up','age-16down','sport-basketball','sport-bicycling','sport-table_tennis','sport-football','sport-jogging','sport-badminton','sport-fitness','consumption-10000to20000','consumption-20000up','consumption-5000to10000','consumption-5000down','occupation-freelancer','occupation-supervisor','occupation-student','occupation-others','occupation-official','occupation-salesman','occupation-teacher','occupation-soldier','occupation-engineer','ACG','indoorsman','game_show','has_car','game_news','entertainment_news','health','online_shopping','variety_show','business_news','tvseries_show','current_news','sports_news','tech_news','offline_shopping','pregnant','gender','study','married','sports_show','gamer','social','has_pet']
 
 # table_name='UserBehavior'
 field_name='objectId'
@@ -192,6 +133,7 @@ def flat_static_info_object(table_name='UserInfoLog',field_name='staticInfo'):
                 split_field = field.split('-')
                 if len(split_field) == 2:
                     staticInfo.set('__'.join(split_field),value)
+
                 else:
                     staticInfo.set(field,value)
                 del all_feature_list_tmp[all_feature_list_tmp.index(field)]
@@ -201,6 +143,22 @@ def flat_static_info_object(table_name='UserInfoLog',field_name='staticInfo'):
                     staticInfo.set('__'.join(split_feature),0)
                 else:
                     staticInfo.set(feature,0)
+            for key1,value1 in notBinaryData.items():
+                tmp_dict_data ={}
+                for key2,value2 in value1.items():
+                    full_key = key1+'-'+key2
+                    print 'Full key: %s' %(full_key)
+                    static_info = static_info_record.get(field_name)
+                    if full_key in  static_info.keys():
+                        tmp_dict_data[key2] = static_info[full_key]
+                    else:
+                        tmp_dict_data[key2] = 0
+                largest_value = dict([sorted(tmp_dict_data.items(),key=lambda l:l[1],reverse=True)[1]])
+                print 'largest_value in field %s is %s'  %(str(key1),largest_value)
+                staticInfo.set(key1,largest_value)
+                # return sorted(tmp_dict_data.items(),key=lambda l:l[1],reverse=True)
+
+
         except LeanCloudError,e:
             print 'the objectId of the static_info_record is %s' %(str(static_info_record.id))
             print e
@@ -388,8 +346,9 @@ def weight_tracker_static_info(table_name=WEIGHTED_STATIC_INFO):
             valueDict = {field:weightedValueDict[field] for field in field_list}
             mostPossibleFieldTuple = sorted(valueDict.items(),key = lambda l:l[1],reverse=True)[0]
             weightedValueDict[field_list[0].split('__')[0]]={mostPossibleFieldTuple[0].split('__')[1]:mostPossibleFieldTuple[1]}
+        print 'WeightedValueDict: %s' %(str(weightedValueDict))
         for field ,value in weightedValueDict.items():
-            print 'Field: %s\nValue: %s' %(str(field),str(value))
+
             dbTable.set(field,value)
         dbTable.save()
 
@@ -481,7 +440,7 @@ def get_all_trackers(db_name=INSTALLATION_TABLE):
     print 'end get_all_applications'
     application_tracker_dict = {}
     for app in all_application_list:
-        Installation = Object.extend(INSTALLATION_TABLE)
+        Installation = Object.extend(db_name)
         query = Query(Installation)
         query.equal_to(APPLICATION_FIELD,app)
         query.less_than('createdAt',current_time)
@@ -508,16 +467,17 @@ def get_all_trackers(db_name=INSTALLATION_TABLE):
 
     return application_tracker_dict
 
-def get_age_and_gender_data_dict(table_name='RealWeightedStaticInfo',tracker_list=None):
+def get_age_and_gender_data_dict(table_name=WEIGHTED_STATIC_INFO,tracker_list=None):
     try:
 
-        field_name = 'user'
+        field_name = TRACKER_FIELD
         DBTable  = Object.extend(table_name)
         gender_type_list =['man','woman']
         age_type_list = ['16down','16to35','35to55','55up']
         dataDict ={gender_type:{age_type:0 for age_type in age_type_list} for gender_type in gender_type_list}
         # new_data_dict = {key:[0 for i in range(4)] for key in dataDict.keys()}
         total_count = len(tracker_list)
+        i=0
         for index, tracker in enumerate(tracker_list):
             query = Query(DBTable)
             query.equal_to(field_name,tracker)
@@ -525,8 +485,11 @@ def get_age_and_gender_data_dict(table_name='RealWeightedStaticInfo',tracker_lis
             result_list = query.find()
             length = len(result_list)
             if length!=1:
-                print 'error: the length of result_list is %s with index: %s with tracker_objectId: %s' %(str(length),str(index),tracker.id)
+                pass
+                # print 'error: the length of result_list is %s with index: %s with tracker_objectId: %s' %(str(length),str(index),tracker.id)
             if length >=1:
+                i=i+1
+                print   
                 result = result_list[0]
             else:
                 continue
@@ -561,11 +524,11 @@ def analyze_tracker_static_info(table_name=APP_STATIC_INFO_TABLE):
     for app,tracker_list in application_tracker_dict.items():
         dbTable = DBTable()
         print 'begin get_age_and_gender_data_dict'
-        age_and_gender_dict = get_age_and_gender_data_dict(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=tracker_list)
-        occupation_dict = get_occupation_data_dict(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=tracker_list)
-        sport_dict = get_sport_data_dict(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=tracker_list)
-        consumption_dict = get_consumption_data_dict(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=tracker_list)
-        field_dict = get_field_data_dict(table_name=FLATTEN_STATIC_INFO_TABLE,tracker_list=tracker_list)
+        age_and_gender_dict = get_age_and_gender_data_dict(table_name=WEIGHTED_STATIC_INFO,tracker_list=tracker_list)
+        occupation_dict = get_occupation_data_dict(table_name=WEIGHTED_STATIC_INFO,tracker_list=tracker_list)
+        sport_dict = get_sport_data_dict(table_name=WEIGHTED_STATIC_INFO,tracker_list=tracker_list)
+        consumption_dict = get_consumption_data_dict(table_name=WEIGHTED_STATIC_INFO,tracker_list=tracker_list)
+        field_dict = get_field_data_dict(table_name=WEIGHTED_STATIC_INFO,tracker_list=tracker_list)
 
 
         print 'end get_age_and_gender_data_dict'
@@ -802,7 +765,7 @@ if __name__ == '__main__':
 # 过程：weight_tracker_static_info
 #      =>[get_all_tracker
 #           ]
-    weight_tracker_static_info()
+#     weight_tracker_static_info()
 
 # 功能：所有展开过的staticInfo中，每个tracker可能有多个staticInfo，这里按照时间的先后顺序，将一个tracker的所有staticInfo加权合并成一个staticInfo，并且将不是binary的feature合并，比如age
 # 过程：weight_tracker_static_info
@@ -817,7 +780,7 @@ if __name__ == '__main__':
 #          =>[get_all_demo_applications
 #             ,get_all_applications](得到每个应用的所有tracker)
 #         [get_tracker_context](遍历应用，计算每个应用所有的tracker的location分布，其中每个用户的location字段是一个各个location feature和时间的字典)
-#     analyze_tracker_static_info()
+    analyze_tracker_static_info()
 
 # 功能：分析所有应用的 所有trackers 经常在的location的时间比例
 # 过程：analyze_tracker_context
