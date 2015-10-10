@@ -411,6 +411,7 @@ def get_all_applications(db_name=APPLICATION_TABLE):
     '''
     DbTable = db_name
     query = Query(DbTable)
+    query.equal_to('app_id', 'demo55bc5d8e00b0cb9c40dec37b')
     query.less_than('createdAt',current_time)
     query.exists('objectId')
     total_count=query.count()

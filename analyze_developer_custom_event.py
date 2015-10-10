@@ -189,7 +189,7 @@ def get_all_demo_applications(table_name='DemoApplication'):
 def get_all_event(table_name='FakeAppEvent'):
     # return the application : event_list dict
     application_list = get_all_demo_applications()
-    application_list.extend(get_all_applications())
+    # application_list.extend(get_all_applications())
     print 'already get all application'
     DbTable = Object.extend(table_name)
     application_event_dict = {}
